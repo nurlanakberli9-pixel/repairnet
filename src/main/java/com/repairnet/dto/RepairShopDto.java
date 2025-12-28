@@ -1,8 +1,12 @@
 package com.repairnet.dto;
 
 
+import com.repairnet.entity.ServiceOffer;
 import com.repairnet.entity.User;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class RepairShopDto {
@@ -13,18 +17,27 @@ public class RepairShopDto {
 
     private String phoneNumber;
 
-    private String serviceType;
+    private List<ServiceOfferDto> offers=new ArrayList<>();
 
-    private User owner;
-
-    public User getOwner() {
-        return owner;
+    public List<ServiceOfferDto> getOffers() {
+        return offers;
     }
 
-    public RepairShopDto setOwner(User owner) {
-        this.owner = owner;
+    public RepairShopDto setOffers(List<ServiceOfferDto> offers) {
+        this.offers = offers;
         return this;
     }
+
+//    private User owner;
+//
+//    public User getOwner() {
+//        return owner;
+//    }
+//
+//    public RepairShopDto setOwner(User owner) {
+//        this.owner = owner;
+//        return this;
+//    }
 
     public String getName() {
         return name;
@@ -53,12 +66,5 @@ public class RepairShopDto {
         return this;
     }
 
-    public String getServiceType() {
-        return serviceType;
-    }
 
-    public RepairShopDto setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-        return this;
-    }
 }

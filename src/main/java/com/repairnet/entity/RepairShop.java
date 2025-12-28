@@ -2,6 +2,10 @@ package com.repairnet.entity;
 
 import jakarta.persistence.*;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class RepairShop {
 
@@ -16,9 +20,20 @@ public class RepairShop {
 
     private String phoneNumber;
 
-    private String serviceType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "repairShop", cascade = CascadeType.ALL)
+    private List<ServiceOffer> offers=new ArrayList<ServiceOffer>();
+
+    public List<ServiceOffer> getOffers() {
+        return offers;
+    }
+
+    public RepairShop setOffers(List<ServiceOffer> offers) {
+        this.offers = offers;
+        return this;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
@@ -59,14 +74,6 @@ public class RepairShop {
         return this;
     }
 
-    public String getServiceType() {
-        return serviceType;
-    }
-
-    public RepairShop setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-        return this;
-    }
 
     public User getOwner() {
         return owner;

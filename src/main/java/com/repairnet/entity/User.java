@@ -1,5 +1,6 @@
 package com.repairnet.entity;
 
+import com.repairnet.enumm.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +26,8 @@ public class User {
 
     private String username;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
 
     //getter and setter
@@ -67,11 +69,11 @@ public class User {
         return this;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public User setRole(String role) {
+    public User setRole(UserRole role) {
         this.role = role;
         return this;
     }
