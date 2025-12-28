@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <title>Dükanını Yarat - TəmirNet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body { background-color: #f8f9fa; }</style>
+</head>
+<body>
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow p-4 border-0" style="border-radius: 20px;">
+                <h2 class="text-center text-primary fw-bold mb-4">Usta Profili Yarat</h2>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label small fw-bold text-muted">Dükanın Adı</label>
+                        <input type="text" id="shopName" class="form-control" placeholder="Məs: Master Service">
+                    </div>
+                    <div class="col">
+                        <label class="form-label small fw-bold text-muted">Sahib ID (Bazadakı ID-niz)</label>
+                        <input type="number" id="ownerId" class="form-control" placeholder="Məs: 1">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">Ünvan</label>
+                    <input type="text" id="shopAddress" class="form-control" placeholder="Bakı ş., Nizami r.">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">Telefon</label>
+                    <input type="text" id="shopPhone" class="form-control" placeholder="055-000-00-00">
+                </div>
+
+                <div class="p-3 bg-light rounded mt-4">
+                    <h5 class="mb-3">Xidmət və Qiymət Təklifi Əlavə Et</h5>
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <select id="brandSelect" class="form-select"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="serviceTypeSelect" class="form-select"></select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" id="offerPrice" class="form-control" placeholder="Qiymət">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" onclick="addOffer()" class="btn btn-dark w-100">Əlavə et</button>
+                        </div>
+                    </div>
+                    <ul id="offersUIList" class="list-group mt-3"></ul>
+                </div>
+
+                <button onclick="submitShop()" class="btn btn-primary btn-lg w-100 mt-4 fw-bold shadow">Dükanı və Təklifləri Tamamla</button>
+                <div class="text-center mt-3"><a href="index.html" class="text-muted small">← Geri qayıt</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let tempOffers = [];
+
+    window.onload = async function() {
+        // Brendləri gətir
+        const bRes = await fetch('http://localhost:8080/serviceData/brand');
+        const brands = await bRes.json();
+        document.getElementById('brandSelect').innerHTML = brands.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+
+        // Xidmətləri gətir
+        const sRes = await fetch('http://localhost:8080/serviceData/serviceType');
+        const services = await sRes.json();
+        document.getElementById('serviceTypeSelect').innerHTML = services.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    };
+
+    function addOffer() {
+        const b = document.getElementById('brandSelect');
+        const s = document.getElementById('serviceTypeSelect');
+        const p = document.getElementById('offerPrice').value;
+        if(!p) return alert("Qiymət yazın!");
+
+        tempOffers.push({ brand: {id: b.value}, serviceType: {id: s.value}, price: p });
+        document.getElementById('offersUIList').innerHTML += `<li class="list-group-item d-flex justify-content-between">
+            ${b.options[b.selectedIndex].text} - ${s.options[s.selectedIndex].text} <b>${p} AZN</b>
+        </li>`;
+    }
+
+    async function submitShop() {
+        const data = {
+            name: document.getElementById('shopName').value,
+            address: document.getElementById('shopAddress').value,
+            phoneNumber: document.getElementById('shopPhone').value,
+            owner: { id: document.getElementById('ownerId').value },
+            offers: tempOffers
+        };
+
+        const res = await fetch('http://localhost:8080/RepairShop/createRepairShop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if(res.ok) { alert("Uğurla yaradıldı!"); window.location.href="index.html"; }
+    }
+</script>
+</body>
+</html>
